@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
-import { Box } from "@mui/material";
-import { CloseRounded } from "@mui/icons-material";
+import { Box, Button } from "@mui/material";
+import { CloseRounded, Delete } from "@mui/icons-material";
 import emotionStyled from "@emotion/styled";
 
 import { MenuOptionItemPropTypes } from "../../../types/types";
 import AddOptionField from "./AddOptionField";
 
 const StyledH5 = emotionStyled.h5`
-  margin-bottom: 0;
+  margin: 0;
 `
 
 const ValueBadge = emotionStyled.span`
@@ -16,6 +16,7 @@ const ValueBadge = emotionStyled.span`
   padding: 4px 9px;
   padding-right: 2px;
   display: flex;
+  align-items: center;
   border-radius: 5px;
   gap: 1rem;
 `
@@ -33,7 +34,10 @@ export default function MenuOptionItem({ item, values, handleAddOptionItem }: Me
   const renderValues = useMemo(() => (values && values.map((value, key) => (
     <ValueBadge key={key}>
       {value}
-      <CloseRounded sx={{ marginRight: '3px' }} color="secondary" />
+
+      <Button sx={{ minWidth: 'unset' }} size="small">
+        <CloseRounded sx={{ marginRight: '3px' }} color="secondary" />
+      </Button>
     </ValueBadge>
   ))), [values]);
 
@@ -46,8 +50,13 @@ export default function MenuOptionItem({ item, values, handleAddOptionItem }: Me
     <Box sx={{
       marginY: "1rem",
     }}>
-      <StyledH5>{item}</StyledH5>
+
+      <Box sx={{ marginY: "0.5rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <StyledH5>{item}</StyledH5>
+        <Button sx={{ minWidth: 'unset' }} size="small"><Delete /></Button>
+      </Box>
       <AddOptionField
+        optionName={item}
         value={newValue}
         placeholder={`Type an option for "${item}" then press Enter`}
         onChangeText={(e) => setNewValue(e.target.value)}

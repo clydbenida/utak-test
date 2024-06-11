@@ -37,7 +37,7 @@ function App() {
         <Add />
       </Fab>
 
-      <CreateMenuDialog open={showCreateMenu} handleCancel={handleCloseCreateMenuDialog} />
+      <CreateMenuDialog open={showCreateMenu} handleClose={handleCloseCreateMenuDialog} />
     </>
   )
 }

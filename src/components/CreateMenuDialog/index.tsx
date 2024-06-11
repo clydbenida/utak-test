@@ -1,77 +1,38 @@
-import { useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
-import { useForm } from "react-hook-form";
 
 import CreateMenuForm from "./components/CreateMenuForm";
 import CreateMenuOptions from "./components/CreateMenuOptions";
-import { CreateMenuDialogPropTypes, MenuItem, MenuOption } from "../../types/types";
+import { CreateMenuDialogPropTypes } from "../../types/types";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { addMenuItems } from "../../redux/menuReducer";
+import { addMenuItems, addOption, addOptionItem, setMenuLoading } from "../../redux/menuReducer";
+import { useEffect } from "react";
 
 export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPropTypes) {
   const dispatch = useAppDispatch();
-  const menuFormState = useAppSelector(state => state.menu.menuForm);
-  const [menuOptions, setMenuOptions] = useState<MenuOption[]>();
+  const { menuForm: menuFormState, loading: menuLoading, menuItems } = useAppSelector(state => state.menu);
 
-  const { control, register, handleSubmit, getValues, setValue } = useForm({ defaultValues: menuFormState })
-  const optionFormValue = getValues("options");
+  useEffect(() => {
+    if (!menuLoading) {
+      console.log("Modal is closing because, menuLoading ===", menuLoading)
+      props.handleClose();
+    }
+  }, [menuLoading]);
 
-  const handleClickSave = (data: MenuItem) => {
-    console.log(data)
+  useEffect(() => {
+    dispatch(setMenuLoading(false))
+  }, [menuItems.length]);
+
+  const handleClickSave = () => {
     // TODO: Add validation
-    dispatch(addMenuItems(data));
+    dispatch(addMenuItems());
   }
 
   const handleAddOption = (newOption: string) => {
-    if (!menuOptions) {
-      setMenuOptions(() => [{ name: newOption, values: [] }]);
-      return;
-    }
-
-    // Check if input is unique
-    const duplicateItem = menuOptions.filter((item) => item.name === newOption);
-
-    if (duplicateItem.length) {
-      return;
-    }
-
-    if (optionFormValue?.length) {
-      const optionFormValueCopy = [...optionFormValue]
-      optionFormValue.push({ name: newOption, values: [] })
-      setValue("options", optionFormValueCopy);
-    } else {
-      setValue("options", [{ name: newOption, values: [] }]);
-    }
-
-    setMenuOptions(prev => [...prev!, { name: newOption, values: [] }]);
+    dispatch(addOption(newOption));
   }
 
   const handleAddOptionItem = (optionName: string, newValue: string) => {
-    if (!menuOptions) {
-      return;
-    }
-
-    const newMenuOptions = menuOptions.map((menu) => {
-      if (menu.name !== optionName) {
-        return menu;
-      }
-
-      if (menu.values) {
-        return {
-          ...menu,
-          values: [...menu.values, newValue]
-        }
-      }
-
-      return {
-        ...menu,
-        values: [newValue]
-      }
-
-    });
-
-    setValue("options", newMenuOptions);
-    setMenuOptions(newMenuOptions);
+    dispatch(addOptionItem({ optionName, newValue }));
   }
 
   return (
@@ -82,13 +43,13 @@ export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPro
       <DialogContent>
         <Grid container justifyContent="space-around">
           <Grid item md={6} sm={12}>
-            <CreateMenuForm control={control} register={register} />
+            <CreateMenuForm />
           </Grid>
 
           <Grid item md={5} sm={12}>
             {/* Options */}
             <CreateMenuOptions
-              menuOptions={menuOptions}
+              menuOptions={menuFormState.options}
               handleAddOption={handleAddOption}
               handleAddOptionItem={handleAddOptionItem}
             />
@@ -96,7 +57,7 @@ export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPro
         </Grid>
       </DialogContent>
       <DialogActions sx={{ paddingRight: "1.5rem", paddingBottom: '1.5rem' }}>
-        <Button variant="contained" color="success" onClick={handleSubmit(handleClickSave)}>Save</Button>
+        <Button variant="contained" color="success" onClick={handleClickSave}>Save</Button>
         <Button variant="outlined" color="success" onClick={props.handleCancel}>Cancel</Button>
       </DialogActions>
     </Dialog>

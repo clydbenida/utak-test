@@ -3,8 +3,8 @@ import { useMemo, useState } from "react";
 
 import MenuOptionItem from "./MenuOptionItem";
 import AddOptionField from "./AddOptionField";
-import { CreateMenuOptionsPropTypes } from "../../../types/types";
 import { StyledLabel } from "./styled";
+import { CreateMenuOptionsPropTypes } from "../../../types/types";
 
 export default function CreateMenuOptions(props: CreateMenuOptionsPropTypes) {
   const { menuOptions } = props
@@ -36,7 +36,7 @@ export default function CreateMenuOptions(props: CreateMenuOptionsPropTypes) {
         onClickAdd={handleAddClick}
         value={newOption}
       />
-      {menuOptions?.length && renderMenuOptions}
+      {menuOptions?.length ? renderMenuOptions : ""}
     </Box>
   )
 }

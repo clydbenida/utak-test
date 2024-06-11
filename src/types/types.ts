@@ -1,4 +1,3 @@
-import { Control, UseFormRegister } from "react-hook-form";
 
 export type ThemeMode = 'dark' | 'light';
 
@@ -8,7 +7,8 @@ export interface AppStoreInitialState {
 
 export interface CreateMenuDialogPropTypes {
   open: boolean;
-  handleCancel: () => void;
+  handleCancel?: () => void;
+  handleClose: () => void;
 }
 
 export interface CustomTextBoxPropTypes {
@@ -18,8 +18,6 @@ export interface CustomTextBoxPropTypes {
 }
 
 export interface CreateMenuFormPropTypes {
-  register: UseFormRegister<MenuItem>;
-  control: Control<MenuItem>;
 }
 
 export interface MenuOptionItemPropTypes {
@@ -52,16 +50,16 @@ export interface MenuItem {
 }
 
 export interface MenuFormState extends MenuItem {
-  error?: string;
+  error?: Record<string, MenuOptionErrorValues>;
+  optionError?: Record<string, MenuOptionErrorValues>;
 }
 
 export interface MenuInitialStateType {
   categories: string[];
   menuItems: MenuItem[];
-  menuForm?: MenuFormState;
+  menuForm: MenuFormState;
+  loading: boolean;
 }
-
-
 
 export interface AddOptionFieldPropTypes {
   placeholder?: string;
@@ -70,4 +68,5 @@ export interface AddOptionFieldPropTypes {
   error?: string;
   value?: string;
   showAddBtn?: boolean;
+  optionName?: string;
 }
