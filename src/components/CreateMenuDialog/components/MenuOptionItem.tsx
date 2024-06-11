@@ -5,6 +5,8 @@ import emotionStyled from "@emotion/styled";
 
 import { MenuOptionItemPropTypes } from "../../../types/types";
 import AddOptionField from "./AddOptionField";
+import { useAppDispatch } from "../../../redux/hooks";
+import { removeOption, removeOptionItem } from "../../../redux/menu/menuReducer";
 
 const StyledH5 = emotionStyled.h5`
   margin: 0;
@@ -31,11 +33,12 @@ const ValueContainer = emotionStyled.div`
 
 export default function MenuOptionItem({ item, values, handleAddOptionItem }: MenuOptionItemPropTypes) {
   const [newValue, setNewValue] = useState("");
+  const dispatch = useAppDispatch();
   const renderValues = useMemo(() => (values && values.map((value, key) => (
     <ValueBadge key={key}>
       {value}
 
-      <Button sx={{ minWidth: 'unset' }} size="small">
+      <Button sx={{ minWidth: 'unset' }} size="small" onClick={() => dispatch(removeOptionItem({ targetName: item, targetValue: value }))}>
         <CloseRounded sx={{ marginRight: '3px' }} color="secondary" />
       </Button>
     </ValueBadge>
@@ -53,12 +56,12 @@ export default function MenuOptionItem({ item, values, handleAddOptionItem }: Me
 
       <Box sx={{ marginY: "0.5rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <StyledH5>{item}</StyledH5>
-        <Button sx={{ minWidth: 'unset' }} size="small"><Delete /></Button>
+        <Button sx={{ minWidth: 'unset' }} size="small" onClick={() => dispatch(removeOption(item))}><Delete /></Button>
       </Box>
       <AddOptionField
         optionName={item}
         value={newValue}
-        placeholder={`Type an option for "${item}" then press Enter`}
+        placeholder={`Type an option for "${item}" then press Enter.`}
         onChangeText={(e) => setNewValue(e.target.value)}
         onClickAdd={handleClickAdd}
       />

@@ -3,7 +3,7 @@ import { Box, MenuItem, Select } from "@mui/material";
 import CreateMenuTextfield from "./CreateMenuTextfield";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StyledLabel } from "./styled";
-import { changeFormField } from "../../../redux/menuReducer";
+import { changeFormField } from "../../../redux/menu/menuReducer";
 
 export default function CreateMenuForm() {
   const categories = useAppSelector(state => state.menu.categories);

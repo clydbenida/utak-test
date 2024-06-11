@@ -1,12 +1,13 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AppStoreInitialState, ThemeMode } from "../types/types";
+import { AppStoreInitialState, ThemeMode } from "../../types/types";
+import { APP } from "../constants";
 
 const initialState: AppStoreInitialState = {
   themeMode: 'dark'
 }
 
 export const appSlice = createSlice({
-  name: 'app',
+  name: APP,
   initialState,
   reducers: {
     setThemeMode: (state, action: PayloadAction<ThemeMode>) => {

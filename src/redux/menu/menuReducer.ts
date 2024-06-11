@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { MenuInitialStateType, MenuItem } from "../types/types";
+import { MenuInitialStateType, MenuItem } from "../../types/types";
+import { MENU } from "../constants";
 
 const initialState: MenuInitialStateType = {
   categories: ["All", "Meals", "Sides", "Drinks", "Desserts"],
@@ -29,7 +30,7 @@ interface AddOptionItemParams {
 }
 
 export const menuSlice = createSlice({
-  name: 'menu',
+  name: MENU,
   initialState,
   reducers: {
     addMenuItems: (state) => {
@@ -62,15 +63,11 @@ export const menuSlice = createSlice({
       const plainFieldError = Object.keys({ ...state.menuForm.error });
       const optionsError = Object.keys({ ...state.menuForm.optionError });
 
-      console.log("error values", state.menuForm.error, state.menuForm.optionError)
-      console.log("if statement", !plainFieldError.length && !optionsError.length);
-      console.log("if statement value", plainFieldError.length, optionsError.length);
 
       if (!plainFieldError.length && !optionsError.length) {
         const { optionError, error, ...fields } = state.menuForm
         state.menuItems.push(fields);
-        state.loading = false;
-        console.log("loading set to false, menu is pushed");
+        state.menuForm = initialState.menuForm;
       }
     },
 
@@ -86,6 +83,10 @@ export const menuSlice = createSlice({
       const newOption = action.payload;
       const dupOption = state.menuForm.options.filter(opt => opt.name === newOption)
 
+      if (!newOption) {
+        return;
+      }
+
       if (dupOption.length) {
         state.menuForm.error = { options: "Duplicate" }
       } else {
@@ -97,10 +98,16 @@ export const menuSlice = createSlice({
     },
 
     removeOption: (state, action: PayloadAction<string>) => {
+      const filteredOptions = state.menuForm.options.filter(item => item.name !== action.payload);
+      state.menuForm.options = filteredOptions;
     },
 
     addOptionItem: (state, action: PayloadAction<AddOptionItemParams>) => {
       const { optionName, newValue } = action.payload
+
+      if (!newValue) {
+        return;
+      }
 
       const newOptions = state.menuForm.options.map((opt) => {
         if (opt.name !== optionName) {
@@ -110,14 +117,10 @@ export const menuSlice = createSlice({
         const dupOptionItem = opt.values?.filter(item => item === newValue);
 
         if (dupOptionItem?.length) {
-          console.log("Has duplicate");
           state.menuForm.optionError = { [opt.name]: "Duplicate" }
           return opt;
         } else {
-          console.log("No duplicate");
-          console.log(opt.values?.length)
           if (opt.values?.length) {
-            console.log("has values");
             return { ...opt, values: [...opt.values, newValue] }
           }
           return { ...opt, values: [newValue] }
@@ -128,12 +131,26 @@ export const menuSlice = createSlice({
       state.menuForm.options = newOptions;
     },
 
+    removeOptionItem: (state, action: PayloadAction<{ targetName: string, targetValue: string }>) => {
+      const { targetName, targetValue } = action.payload;
+      const filteredOptions = state.menuForm.options.map(item => {
+        if (item.name !== targetName) {
+          return item;
+        }
+
+        const filteredValues = item.values?.filter(val => val !== targetValue);
+        return { ...item, values: filteredValues }
+      });
+
+      state.menuForm.options = filteredOptions;
+    },
+
     setMenuLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     }
   }
 })
 
-export const { addMenuItems, changeFormField, addOption, addOptionItem, setMenuLoading } = menuSlice.actions
+export const { removeOption, removeOptionItem, addMenuItems, changeFormField, addOption, addOptionItem, setMenuLoading } = menuSlice.actions
 
 export default menuSlice.reducer

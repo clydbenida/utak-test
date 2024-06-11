@@ -3,7 +3,7 @@ import { DarkModeOutlined, DarkMode } from "@mui/icons-material";
 import { Button, Container, TextField, styled } from "@mui/material";
 import { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { setThemeMode } from "../redux/appReducer";
+import { setThemeMode } from "../redux/app/appReducer";
 
 const HeaderContainer = styled(Container)`
   padding-top: 0.75rem;

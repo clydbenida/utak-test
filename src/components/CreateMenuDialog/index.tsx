@@ -4,8 +4,9 @@ import CreateMenuForm from "./components/CreateMenuForm";
 import CreateMenuOptions from "./components/CreateMenuOptions";
 import { CreateMenuDialogPropTypes } from "../../types/types";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { addMenuItems, addOption, addOptionItem, setMenuLoading } from "../../redux/menuReducer";
+import { addOption, addOptionItem, setMenuLoading } from "../../redux/menu/menuReducer";
 import { useEffect } from "react";
+import { ATTEMPT_ADD_MENU_ITEMS } from "../../redux/constants";
 
 export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPropTypes) {
   const dispatch = useAppDispatch();
@@ -13,7 +14,6 @@ export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPro
 
   useEffect(() => {
     if (!menuLoading) {
-      console.log("Modal is closing because, menuLoading ===", menuLoading)
       props.handleClose();
     }
   }, [menuLoading]);
@@ -24,7 +24,7 @@ export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPro
 
   const handleClickSave = () => {
     // TODO: Add validation
-    dispatch(addMenuItems());
+    dispatch({ type: ATTEMPT_ADD_MENU_ITEMS });
   }
 
   const handleAddOption = (newOption: string) => {
@@ -58,7 +58,7 @@ export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPro
       </DialogContent>
       <DialogActions sx={{ paddingRight: "1.5rem", paddingBottom: '1.5rem' }}>
         <Button variant="contained" color="success" onClick={handleClickSave}>Save</Button>
-        <Button variant="outlined" color="success" onClick={props.handleCancel}>Cancel</Button>
+        <Button variant="outlined" color="success" onClick={props.handleClose}>Cancel</Button>
       </DialogActions>
     </Dialog>
   )
