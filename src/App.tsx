@@ -1,33 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Fab } from '@mui/material'
 import './App.css'
+import Header from './components/Header'
+import { Add } from '@mui/icons-material'
+import MainContent from './components/MainContent'
+import CreateMenuDialog from './components/CreateMenuDialog'
+import { useState } from 'react'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
+
+  function handleOpenCreateMenuDialog() {
+    setShowCreateMenu(true);
+  }
+
+  function handleCloseCreateMenuDialog() {
+    setShowCreateMenu(false);
+  }
+
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Header />
+      <MainContent />
+      <Fab
+        onClick={handleOpenCreateMenuDialog}
+        sx={{
+          position: 'absolute',
+          bottom: '2rem',
+          right: '2rem',
+        }}
+        variant="extended"
+        size="large"
+        color="primary"
+        aria-label='add'
+      >
+        <Add />
+      </Fab>
+
+      <CreateMenuDialog open={showCreateMenu} handleCancel={handleCloseCreateMenuDialog} />
     </>
   )
 }
