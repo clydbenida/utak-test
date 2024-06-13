@@ -92,6 +92,25 @@ export const menuSlice = createSlice({
         ...state.menuForm.fields,
         [fieldName]: action.payload.newValue,
       };
+
+      state.menuForm.error = {
+        ...state.menuForm.error,
+        [fieldName]: "",
+      }
+
+      if (action.payload.newValue === "") {
+        state.menuForm.error = {
+          ...state.menuForm.error,
+          [fieldName]: "Empty",
+        }
+      }
+
+      if (action.payload.name === "category" && action.payload.newValue === "All") {
+        state.menuForm.error = {
+          ...state.menuForm.error,
+          [fieldName]: "Empty",
+        }
+      }
     },
 
     addOption: (state, action: PayloadAction<string>) => {

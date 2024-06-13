@@ -5,8 +5,10 @@ import { RootState } from "../store";
 import { deleteMenuItem, editMenuItem, postMenuItem } from "../../firebase/api";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { DeleteItemSagaParams } from "../../types/redux";
+import { setAppLoading, setSnackbar } from "../app/appReducer";
 
 function* attemptAddMenuItems() {
+  yield put(setAppLoading(true));
   yield put(setMenuLoading(true))
   yield put(validateMenuFormFields());
 
@@ -14,34 +16,44 @@ function* attemptAddMenuItems() {
 
   if (Object.keys({ ...error }).length && optionError) {
     yield put(setMenuLoading(false))
+    yield put(setAppLoading(false));
   } else {
     const { menu: { menuForm: { fields } } }: RootState = yield select();
 
     yield call(postMenuItem, fields);
     yield put(resetMenuForm());
+    yield put(setAppLoading(false));
+    yield put(setSnackbar({ open: true, message: "Successfully added items" }))
   }
 }
 
 function* attemptEditMenuItems() {
   yield put(setMenuLoading(true))
+  yield put(setAppLoading(true))
   yield put(validateMenuFormFields());
 
   const { menu: { menuForm: { error, optionError } } }: RootState = yield select();
 
   if (Object.keys({ ...error }).length && optionError) {
     yield put(setMenuLoading(false))
+    yield put(setAppLoading(false))
   } else {
     const { menu: { menuForm: { fields } } }: RootState = yield select();
 
     yield call(editMenuItem, fields);
     yield put(resetMenuForm());
     yield put(setMenuLoading(false))
+    yield put(setAppLoading(false))
+    yield put(setSnackbar({ open: true, message: "Successfully edited item" }))
   }
 }
 
 function* attemptDeleteMenuItem(action: PayloadAction<DeleteItemSagaParams>) {
   try {
+    yield put(setAppLoading(true));
     yield call(deleteMenuItem, action.payload.menu_id);
+    yield put(setAppLoading(false));
+    yield put(setSnackbar({ open: true, message: "Successfully deleted item" }))
   } catch (err) {
     yield call(console.error, err)
   }

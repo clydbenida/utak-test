@@ -9,6 +9,11 @@ export interface AppStoreInitialState {
   search: {
     query?: string;
     result?: MenuItem[];
+  },
+  loading: boolean;
+  snackbar: {
+    open: boolean;
+    message: string;
   }
 }
 

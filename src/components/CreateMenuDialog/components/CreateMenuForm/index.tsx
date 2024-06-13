@@ -2,12 +2,13 @@ import { useMemo } from "react";
 import { Box, MenuItem, Select } from "@mui/material";
 import CreateMenuTextfield from "./components/CreateMenuTextfield";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { StyledLabel } from "../styled";
+import { ErrorSpan, StyledLabel } from "../styled";
 import { changeFormField } from "../../../../redux/menu/menuReducer";
 
 export default function CreateMenuForm() {
   const categories = useAppSelector(state => state.menu.categories);
   const { category } = useAppSelector(state => state.menu.menuForm.fields);
+  const categoryError = useAppSelector(state => state.menu.menuForm.error?.category);
   const dispatch = useAppDispatch();
 
   const renderCategories = useMemo(() => categories.map((category, key) => (
@@ -28,14 +29,17 @@ export default function CreateMenuForm() {
           defaultValue="All"
           fullWidth
           sx={{
-            border: "1px solid #6e6e6e5f",
             width: '100%',
           }}
           onChange={(e) => dispatch(changeFormField({ name: 'category', newValue: e.target.value }))}
-          value={category ?? "All"}
+          placeholder="Select a category"
+          value={category || "All"}
         >
           {renderCategories}
         </Select>
+        {categoryError ? (
+          <ErrorSpan>Choose another value</ErrorSpan>
+        ) : ""}
       </Box>
       <h3>Product Information</h3>
       <CreateMenuTextfield

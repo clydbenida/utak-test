@@ -5,6 +5,11 @@ export const StyledLabel = emotionStyled.label`
   font-weight: 400;
 `
 
+export const ErrorSpan = emotionStyled.span`
+  color: #FF5756;
+  font-size: 12px;
+`
+
 export const StyledInput = emotionStyled.input`
   padding: 0.8em 0.8em;
   font-size: 16px;

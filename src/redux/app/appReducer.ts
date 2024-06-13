@@ -11,6 +11,11 @@ const initialState: AppStoreInitialState = {
   search: {
     query: "",
     result: [],
+  },
+  loading: true,
+  snackbar: {
+    open: false,
+    message: "",
   }
 }
 
@@ -46,10 +51,23 @@ export const appSlice = createSlice({
     assignSearchResult: (state, action: PayloadAction<MenuItem[]>) => {
       const query = action.payload;
       state.search.result = query;
-    }
+    },
+
+    setAppLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+
+    setSnackbar: (state, action: PayloadAction<{ open: boolean, message: string }>) => {
+      state.snackbar.open = action.payload.open;
+      state.snackbar.message = action.payload.message;
+    },
+
+    closeSnackbar: (state) => {
+      state.snackbar.open = false;
+    },
   }
 });
 
-export const { onQueryChange, assignSearchResult, selectCategory, openConfirmModal, closeConfirmModal } = appSlice.actions
+export const { setSnackbar, closeSnackbar, setAppLoading, onQueryChange, assignSearchResult, selectCategory, openConfirmModal, closeConfirmModal } = appSlice.actions
 
 export default appSlice.reducer;

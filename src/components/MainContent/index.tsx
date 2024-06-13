@@ -5,6 +5,7 @@ import { useAppSelector } from "../../redux/hooks";
 import CategorySection from "./components/CategorySection";
 import Filters from "./components/Filters";
 import { MainContenPropTypes, MenuItem } from "../../types/types";
+import EmptyState from "./components/EmptyState";
 
 const getGroupedCategories = (array?: MenuItem[]) => {
   if (!array) { return [] }
@@ -40,10 +41,19 @@ export default function MainContent(props: MainContenPropTypes) {
     renderCategorySections(groupedSearchResult)
   ), [groupedSearchResult, renderCategorySections]);
 
+  const isMenuItemsEmpty = renderMenuItems.length === 0;
+  const isSearchItemsEmpty = renderSearchItems.length === 0 && query;
+
   return (
     <Container>
-      <Filters />
-      {query ? renderSearchItems : renderMenuItems}
+      {isMenuItemsEmpty || isSearchItemsEmpty ? (
+        <EmptyState />
+      ) : (
+        <>
+          <Filters />
+          {query ? renderSearchItems : renderMenuItems}
+        </>
+      )}
     </Container>
   );
 }
