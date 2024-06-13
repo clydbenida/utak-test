@@ -1,21 +1,23 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { MenuInitialStateType, MenuItem } from "../../types/types";
+import { MenuItem, MenuValue } from "../../types/types";
 import { MENU } from "../constants";
+import { MenuInitialStateType } from "../../types/redux";
 
 const initialState: MenuInitialStateType = {
   categories: ["All", "Meals", "Sides", "Drinks", "Desserts"],
   menuItems: [],
   loading: false,
   menuForm: {
-    name: "",
-    options: [],
-    cost: 0,
-    price: 0,
-    stock: 0,
-    error: {
-
+    fields: {
+      name: "",
+      cost: 0,
+      price: 0,
+      stock: 0,
+      category: ''
     },
-    category: ''
+    isEdit: false,
+    error: {},
+    optionError: {},
   },
 }
 
@@ -26,23 +28,34 @@ interface ChangeFormParams {
 
 interface AddOptionItemParams {
   optionName: string;
-  newValue: string;
+  newValue: MenuValue;
 }
 
 export const menuSlice = createSlice({
   name: MENU,
   initialState,
   reducers: {
-    addMenuItems: (state) => {
+    assignMenuItems: (state, action: PayloadAction<MenuItem[]>) => {
+      state.menuItems = action.payload;
+    },
+
+    assignMenuForm: (state, action: PayloadAction<MenuItem>) => {
+      state.menuForm.fields = { ...action.payload };
+      state.menuForm.isEdit = true;
+    },
+
+    validateMenuFormFields: (state) => {
       // Validate Menu Items
       // Get plain fields
       state.loading = true;
       state.menuForm.error = initialState.menuForm.error;
       state.menuForm.optionError = initialState.menuForm.optionError;
 
-      const { optionError, error, options, ...plainFields } = state.menuForm;
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      const { options, ...plainFields } = { ...state.menuForm.fields };
       for (const key in plainFields) {
         if (!plainFields[key as keyof typeof plainFields]) {
+          console.log(plainFields);
           state.menuForm.error = {
             ...state.menuForm.error, [key]: "Empty"
           }
@@ -51,37 +64,46 @@ export const menuSlice = createSlice({
 
       // Validate options
       // Check if each options has a value
-      const optionsLength = state.menuForm.options.length;
+      const optionsLength = state.menuForm.fields?.options?.length ?? 0;
 
-      for (let i = 0; i < optionsLength; i++) {
-        const currentOption = state.menuForm.options[i];
-        if (!currentOption.values?.length) {
-          state.menuForm.optionError = { [currentOption.name]: "Empty" }
+      if (state.menuForm.fields?.options) {
+        for (let i = 0; i < optionsLength; i++) {
+          const currentOption = state.menuForm?.fields?.options[i];
+          if (!currentOption.values?.length) {
+            state.menuForm.optionError = { [currentOption.name]: "Empty" }
+          }
         }
       }
 
       const plainFieldError = Object.keys({ ...state.menuForm.error });
       const optionsError = Object.keys({ ...state.menuForm.optionError });
 
-
-      if (!plainFieldError.length && !optionsError.length) {
-        const { optionError, error, ...fields } = state.menuForm
-        state.menuItems.push(fields);
-        state.menuForm = initialState.menuForm;
+      if (!plainFieldError.length && !optionsError.length && state.menuForm.fields) {
+        // const { fields } = state.menuForm
       }
+    },
+
+    resetMenuForm: (state) => {
+      state.menuForm = initialState.menuForm;
     },
 
     changeFormField: (state, action: PayloadAction<ChangeFormParams>) => {
       const fieldName = action.payload.name;
-      state.menuForm = {
-        ...state.menuForm,
+      state.menuForm.fields = {
+        ...state.menuForm.fields,
         [fieldName]: action.payload.newValue,
       };
     },
 
     addOption: (state, action: PayloadAction<string>) => {
+      if (!state.menuForm.fields) {
+        return;
+      }
+
       const newOption = action.payload;
-      const dupOption = state.menuForm.options.filter(opt => opt.name === newOption)
+      const dupOption = state.menuForm.fields.options
+        ? state.menuForm.fields.options.filter(opt => opt.name === newOption)
+        : []
 
       if (!newOption) {
         return;
@@ -90,31 +112,42 @@ export const menuSlice = createSlice({
       if (dupOption.length) {
         state.menuForm.error = { options: "Duplicate" }
       } else {
-        state.menuForm.options = [
-          ...state.menuForm.options,
-          { name: newOption, values: [] }
-        ]
+        if (state.menuForm.fields.options?.length) {
+          state.menuForm.fields.options = [
+            ...state.menuForm.fields.options,
+            { name: newOption, values: [] }
+          ]
+        } else {
+          state.menuForm.fields.options = [{ name: newOption, values: [] }]
+        }
       }
     },
 
     removeOption: (state, action: PayloadAction<string>) => {
-      const filteredOptions = state.menuForm.options.filter(item => item.name !== action.payload);
-      state.menuForm.options = filteredOptions;
+      if (!state.menuForm.fields) return;
+      if (!state.menuForm.fields.options) return;
+
+      const filteredOptions = state.menuForm.fields.options.filter(item => item.name !== action.payload);
+      state.menuForm.fields.options = filteredOptions;
     },
 
+
     addOptionItem: (state, action: PayloadAction<AddOptionItemParams>) => {
+      if (!state.menuForm.fields) return;
+      if (!state.menuForm.fields.options) return;
+
       const { optionName, newValue } = action.payload
 
       if (!newValue) {
         return;
       }
 
-      const newOptions = state.menuForm.options.map((opt) => {
+      const newOptions = state.menuForm.fields.options.map((opt) => {
         if (opt.name !== optionName) {
           return opt;
         }
 
-        const dupOptionItem = opt.values?.filter(item => item === newValue);
+        const dupOptionItem = opt.values?.filter(item => item.name === newValue.name);
 
         if (dupOptionItem?.length) {
           state.menuForm.optionError = { [opt.name]: "Duplicate" }
@@ -128,21 +161,24 @@ export const menuSlice = createSlice({
 
       });
 
-      state.menuForm.options = newOptions;
+      state.menuForm.fields.options = newOptions;
     },
 
-    removeOptionItem: (state, action: PayloadAction<{ targetName: string, targetValue: string }>) => {
+    removeOptionItem: (state, action: PayloadAction<{ targetName: string, targetValue: MenuValue }>) => {
+      if (!state.menuForm.fields) return;
+      if (!state.menuForm.fields.options) return;
+
       const { targetName, targetValue } = action.payload;
-      const filteredOptions = state.menuForm.options.map(item => {
+      const filteredOptions = state.menuForm.fields.options.map(item => {
         if (item.name !== targetName) {
           return item;
         }
 
-        const filteredValues = item.values?.filter(val => val !== targetValue);
+        const filteredValues = item.values?.filter(val => val.name !== targetValue.name);
         return { ...item, values: filteredValues }
       });
 
-      state.menuForm.options = filteredOptions;
+      state.menuForm.fields.options = filteredOptions;
     },
 
     setMenuLoading: (state, action: PayloadAction<boolean>) => {
@@ -151,6 +187,17 @@ export const menuSlice = createSlice({
   }
 })
 
-export const { removeOption, removeOptionItem, addMenuItems, changeFormField, addOption, addOptionItem, setMenuLoading } = menuSlice.actions
+export const {
+  assignMenuItems,
+  assignMenuForm,
+  resetMenuForm,
+  removeOption,
+  removeOptionItem,
+  validateMenuFormFields,
+  changeFormField,
+  addOption,
+  addOptionItem,
+  setMenuLoading
+} = menuSlice.actions
 
 export default menuSlice.reducer

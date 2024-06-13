@@ -1,9 +1,20 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AppStoreInitialState, ThemeMode } from "../../types/types";
+import { ThemeMode } from "../../types/types";
 import { APP } from "../constants";
+import { AppStoreInitialState } from "../../types/redux";
 
 const initialState: AppStoreInitialState = {
-  themeMode: 'dark'
+  themeMode: 'dark',
+  selectedCategory: "All",
+  confirmModal: {
+    open: false,
+  }
+}
+
+interface openConfirmModalParams {
+  acceptCallback: () => void;
+  declineCallback: () => void;
+  message?: string;
 }
 
 export const appSlice = createSlice({
@@ -12,10 +23,24 @@ export const appSlice = createSlice({
   reducers: {
     setThemeMode: (state, action: PayloadAction<ThemeMode>) => {
       state.themeMode = action.payload;
+    },
+
+    selectCategory: (state, action: PayloadAction<string>) => {
+      state.selectedCategory = action.payload;
+    },
+
+    openConfirmModal: (state, action: PayloadAction<openConfirmModalParams>) => {
+      state.confirmModal.open = true;
+      state.confirmModal.message = action.payload.message;
+    },
+
+    closeConfirmModal: (state) => {
+      state.confirmModal.open = false;
+      state.confirmModal.message = "";
     }
   }
 });
 
-export const { setThemeMode } = appSlice.actions
+export const { setThemeMode, selectCategory, openConfirmModal, closeConfirmModal } = appSlice.actions
 
 export default appSlice.reducer;

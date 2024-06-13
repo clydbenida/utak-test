@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
 import { useMemo, useState } from "react";
 
-import MenuOptionItem from "./MenuOptionItem";
-import AddOptionField from "./AddOptionField";
-import { StyledLabel } from "./styled";
-import { CreateMenuOptionsPropTypes } from "../../../types/types";
+import MenuOptionItem from "./components/MenuOptionItem";
+import AddOptionField from "./components/AddOptionField";
+import { StyledLabel } from "../styled";
+import { CreateMenuOptionsPropTypes } from "../../../../types/types";
 
 export default function CreateMenuOptions(props: CreateMenuOptionsPropTypes) {
   const { menuOptions } = props

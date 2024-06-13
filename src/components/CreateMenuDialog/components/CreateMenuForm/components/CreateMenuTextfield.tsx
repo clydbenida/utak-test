@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
-import { StyledInput, StyledLabel } from "./styled";
-import { MenuItem } from "../../../types/types";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { changeFormField } from "../../../redux/menu/menuReducer";
+import { StyledInput, StyledLabel } from "../../styled";
+import { MenuItem } from "../../../../../types/types";
+import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
+import { changeFormField } from "../../../../../redux/menu/menuReducer";
 
 interface CreateMenuTextfieldPropTypes {
   label?: string;
@@ -12,7 +12,7 @@ interface CreateMenuTextfieldPropTypes {
 }
 
 export default function CreateMenuTextfield(props: CreateMenuTextfieldPropTypes) {
-  const field = useAppSelector(state => state.menu.menuForm[props.name])
+  const field = useAppSelector(state => state.menu.menuForm.fields[props.name])
   const dispatch = useAppDispatch();
   return (
     <Box sx={{

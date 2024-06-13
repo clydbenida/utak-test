@@ -4,10 +4,16 @@ import Header from './components/Header'
 import { Add } from '@mui/icons-material'
 import MainContent from './components/MainContent'
 import CreateMenuDialog from './components/CreateMenuDialog'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { db } from './firebase'
+import { ref, onValue } from 'firebase/database'
+import { MenuItem } from './types/types'
+import { useAppDispatch } from './redux/hooks'
+import { assignMenuItems } from './redux/menu/menuReducer'
 
 function App() {
   const [showCreateMenu, setShowCreateMenu] = useState(false);
+  const dispatch = useAppDispatch();
 
   function handleOpenCreateMenuDialog() {
     setShowCreateMenu(true);
@@ -17,11 +23,22 @@ function App() {
     setShowCreateMenu(false);
   }
 
+  useEffect(() => {
+    const testRef = ref(db, 'menuItems');
+
+    onValue(testRef, (snapshot) => {
+      const data = snapshot.val();
+      const dataKeys = Object.keys(data);
+      const menuItems: MenuItem[] = dataKeys.map(uidKey => data[uidKey]);
+
+      dispatch(assignMenuItems(menuItems));
+    })
+  }, []);
 
   return (
     <>
       <Header />
-      <MainContent />
+      <MainContent handleOpenEditMenu={handleOpenCreateMenuDialog} />
       <Fab
         onClick={handleOpenCreateMenuDialog}
         sx={{

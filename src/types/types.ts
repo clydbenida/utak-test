@@ -1,20 +1,16 @@
+import { PropsWithChildren } from "react";
 
 export type ThemeMode = 'dark' | 'light';
 
-export interface AppStoreInitialState {
-  themeMode: ThemeMode
-}
-
-export interface CreateMenuDialogPropTypes {
+export interface CreateMenuDialogPropTypes extends PropsWithChildren {
   open: boolean;
   handleCancel?: () => void;
   handleClose: () => void;
 }
 
-export interface CustomTextBoxPropTypes {
-  label?: string;
-  placeholder?: string;
-  value?: string;
+export interface MenuDialogContentProps {
+  handleCancel?: () => void;
+  handleClose: () => void;
 }
 
 export interface CreateMenuFormPropTypes {
@@ -22,43 +18,44 @@ export interface CreateMenuFormPropTypes {
 
 export interface MenuOptionItemPropTypes {
   item: string;
-  values?: string[];
-  handleAddOptionItem: (name: string, newValue: string) => void;
+  values?: MenuValue[];
+  handleAddOptionItem: (name: string, newValue: MenuValue) => void;
 }
 
 export interface CreateMenuOptionsPropTypes {
   menuOptions?: MenuOption[];
   handleAddOption: (name: string) => void;
-  handleAddOptionItem: (name: string, newValue: string) => void;
+  handleAddOptionItem: (name: string, newValue: MenuValue) => void;
+}
+
+export interface MenuValue {
+  name: string;
+  addedPrice: number;
+  addedCost: number;
 }
 
 export interface MenuOption {
   name: string;
-  values?: string[];
+  values?: MenuValue[];
 }
 
 export type MenuOptionErrorValues = "Duplicate" | "Empty" | ""
 
-
 export interface MenuItem {
+  menu_id?: string;
   name: string;
   category: string;
   price: number;
   cost: number;
   stock: number;
-  options: MenuOption[];
+  options?: MenuOption[];
 }
 
-export interface MenuFormState extends MenuItem {
+export interface MenuFormState {
   error?: Record<string, MenuOptionErrorValues>;
   optionError?: Record<string, MenuOptionErrorValues>;
-}
-
-export interface MenuInitialStateType {
-  categories: string[];
-  menuItems: MenuItem[];
-  menuForm: MenuFormState;
-  loading: boolean;
+  fields: MenuItem;
+  isEdit: boolean;
 }
 
 export interface AddOptionFieldPropTypes {
@@ -69,4 +66,13 @@ export interface AddOptionFieldPropTypes {
   value?: string;
   showAddBtn?: boolean;
   optionName?: string;
+}
+
+export interface MenuItemPropTypes {
+  data: MenuItem;
+  handleOpenEditMenu: () => void;
+}
+
+export interface MainContenPropTypes {
+  handleOpenEditMenu: () => void;
 }

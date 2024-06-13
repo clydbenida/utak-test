@@ -1,20 +1,23 @@
+import { useMemo } from "react";
 import { Box, Button } from "@mui/material";
-import { useMemo, useState } from "react";
-import { useAppSelector } from "../../../redux/hooks";
+
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { selectCategory } from "../../../redux/app/appReducer";
 
 export default function Filters() {
   const categories = useAppSelector(state => state.menu.categories);
-  const [selectedCategories, setSelectedCategories] = useState("All");
+  const dispatch = useAppDispatch();
+  const selectedCategory = useAppSelector(state => state.app.selectedCategory)
 
   const renderCategoryFilters = useMemo(() => categories.map((category, key) => (
     <Button
-      variant={selectedCategories === category ? "contained" : "outlined"}
-      onClick={() => setSelectedCategories(category)}
+      variant={selectedCategory === category ? "contained" : "outlined"}
+      onClick={() => dispatch(selectCategory(category))}
       key={key}
     >
       {category}
     </Button>
-  )), [categories, selectedCategories]);
+  )), [categories, selectedCategory]);
 
   return (
     <Box>
