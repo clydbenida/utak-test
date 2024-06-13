@@ -4,7 +4,6 @@ import { APP } from "../constants";
 import { AppStoreInitialState } from "../../types/redux";
 
 const initialState: AppStoreInitialState = {
-  themeMode: 'dark',
   selectedCategory: "All",
   confirmModal: {
     open: false,
