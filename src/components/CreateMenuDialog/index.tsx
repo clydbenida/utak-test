@@ -103,11 +103,11 @@ export default function CreateMenuDialog({ open, handleClose, ...props }: Create
       </DialogTitle>
       <DialogContent>
         <Grid container justifyContent="space-around">
-          <Grid item md={6} sm={12}>
+          <Grid item md={6} sm={12} xs={12}>
             <CreateMenuForm />
           </Grid>
 
-          <Grid item md={5} sm={12}>
+          <Grid item md={5} sm={12} xs={12}>
             {/* Options */}
             <CreateMenuOptions
               menuOptions={menuFormState?.options}
