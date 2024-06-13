@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { addOption, addOptionItem, resetMenuForm, setMenuLoading } from "../../redux/menu/menuReducer";
 import { ATTEMPT_ADD_MENU_ITEMS, ATTEMPT_DELETE_MENU_ITEMS, ATTEMPT_EDIT_MENU_ITEMS } from "../../redux/constants";
 
-export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPropTypes) {
+export default function CreateMenuDialog({ open, handleClose, ...props }: CreateMenuDialogPropTypes) {
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
   const [openConfirmEditModal, setOpenConfirmEditModal] = useState(false);
   const [openConfirmCancelModal, setOpenConfirmCancelModal] = useState(false);
@@ -30,22 +30,16 @@ export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPro
 
   useEffect(() => {
     if (!menuLoading) {
-      props.handleClose();
+      handleClose();
     }
   }, [menuLoading]);
 
   useEffect(() => {
     dispatch(setMenuLoading(false))
-  }, [menuItems.length]);
+  }, [menuItems.length, dispatch]);
 
   useEffect(() => {
-    if (open) {
-      console.log("menu form changed", rerenders)
-
-      setRerenders(prev => prev + 1);
-    } else {
-      setRerenders(0);
-    }
+    setRerenders(prev => open ? prev + 1 : 0);
   }, [menuFormState, open]);
 
 
@@ -57,26 +51,25 @@ export default function CreateMenuDialog({ open, ...props }: CreateMenuDialogPro
     dispatch(addOptionItem({ optionName, newValue }));
   }
 
-
   const handleConfirmDelete = () => {
-    setOpenConfirmDeleteModal(false);
     dispatch({ type: ATTEMPT_DELETE_MENU_ITEMS, payload: { menu_id: menuFormState.menu_id } })
 
     setTimeout(() => {
       dispatch(resetMenuForm())
     }, 150); // Reset form after closing the animation is done
 
-    props.handleClose();
+    setOpenConfirmDeleteModal(false);
+    handleClose();
   }
 
-  const handleConfirmCancel = () => {
-    props.handleClose();
+  const handleConfirmCancel = useCallback(() => {
     setTimeout(() => {
       dispatch(resetMenuForm())
     }, 150); // Reset form after closing the animation is done
 
     setOpenConfirmCancelModal(false);
-  }
+    handleClose();
+  }, [dispatch, handleClose])
 
   const handleConfirmEdit = () => {
     if (isEdit) {

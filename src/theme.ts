@@ -1,10 +1,8 @@
 import { createTheme } from "@mui/material";
-import { ThemeMode } from "./types/types";
 
-export const generateTheme = (mode: ThemeMode) => {
+export const generateTheme = () => {
   return createTheme({
     palette: {
-      mode,
       primary: {
         main: '#FF6347', // Tomato Red
         dark: '#333333', // Dark Charcoal
@@ -62,6 +60,12 @@ export const generateTheme = (mode: ThemeMode) => {
               ":hover": {
                 backgroundColor: "#FF6347df",
               }
+            }
+          },
+          {
+            props: { variant: "contained", color: "success" },
+            style: {
+              color: '#FFF',
             }
           }
         ],

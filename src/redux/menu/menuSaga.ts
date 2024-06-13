@@ -43,7 +43,7 @@ function* attemptDeleteMenuItem(action: PayloadAction<DeleteItemSagaParams>) {
   try {
     yield call(deleteMenuItem, action.payload.menu_id);
   } catch (err) {
-    yield call(console.log, err)
+    yield call(console.error, err)
   }
 }
 

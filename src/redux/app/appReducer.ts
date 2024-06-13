@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { ThemeMode } from "../../types/types";
+import { MenuItem } from "../../types/types";
 import { APP } from "../constants";
 import { AppStoreInitialState } from "../../types/redux";
 
@@ -8,6 +8,10 @@ const initialState: AppStoreInitialState = {
   selectedCategory: "All",
   confirmModal: {
     open: false,
+  },
+  search: {
+    query: "",
+    result: [],
   }
 }
 
@@ -21,10 +25,6 @@ export const appSlice = createSlice({
   name: APP,
   initialState,
   reducers: {
-    setThemeMode: (state, action: PayloadAction<ThemeMode>) => {
-      state.themeMode = action.payload;
-    },
-
     selectCategory: (state, action: PayloadAction<string>) => {
       state.selectedCategory = action.payload;
     },
@@ -37,10 +37,20 @@ export const appSlice = createSlice({
     closeConfirmModal: (state) => {
       state.confirmModal.open = false;
       state.confirmModal.message = "";
+    },
+
+    onQueryChange: (state, action: PayloadAction<string>) => {
+      const query = action.payload;
+      state.search.query = query;
+    },
+
+    assignSearchResult: (state, action: PayloadAction<MenuItem[]>) => {
+      const query = action.payload;
+      state.search.result = query;
     }
   }
 });
 
-export const { setThemeMode, selectCategory, openConfirmModal, closeConfirmModal } = appSlice.actions
+export const { onQueryChange, assignSearchResult, selectCategory, openConfirmModal, closeConfirmModal } = appSlice.actions
 
 export default appSlice.reducer;

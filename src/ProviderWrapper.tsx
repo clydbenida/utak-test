@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { CssBaseline, ThemeProvider } from "@mui/material";
+
 import { generateTheme } from "./theme";
 import { useAppSelector } from './redux/hooks';
 

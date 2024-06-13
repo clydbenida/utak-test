@@ -1,11 +1,14 @@
-import { MenuFormState, MenuItem, ThemeMode } from "./types";
+import { MenuFormState, MenuItem } from "./types";
 
 export interface AppStoreInitialState {
-  themeMode: ThemeMode;
   selectedCategory: string;
   confirmModal: {
     open?: boolean;
     message?: string;
+  },
+  search: {
+    query?: string;
+    result?: MenuItem[];
   }
 }
 

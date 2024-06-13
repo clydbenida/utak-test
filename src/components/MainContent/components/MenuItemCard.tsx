@@ -1,9 +1,9 @@
-import { Box, Card, CardContent } from "@mui/material";
+import { Box, Card, CardContent, styled } from "@mui/material";
 
 import { useAppDispatch } from "../../../redux/hooks";
 import { assignMenuForm } from "../../../redux/menu/menuReducer";
-import { CardActionContainer, CardDetail, StyledH2 } from "./styled";
 import { MenuItemPropTypes } from "../../../types/types";
+import emotionStyled from "@emotion/styled";
 
 export default function MenuItemCard(props: MenuItemPropTypes) {
   const dispatch = useAppDispatch();
@@ -44,3 +44,20 @@ const cardStyle = {
     border: "1px solid #FF6347"
   }
 }
+
+const StyledH2 = emotionStyled.h2`
+  margin: 0;
+`
+
+const CardActionContainer = styled(Box)`
+  display: flex;
+  top: -0.5rem;
+  right: -0.5rem;
+  position: absolute;
+  gap: 4;
+`
+
+const CardDetail = emotionStyled.div`
+  font-size: 14px;
+`
+

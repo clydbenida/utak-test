@@ -5,7 +5,6 @@ import { MenuItem } from "../types/types";
 
 export const postMenuItem = (menuItem: MenuItem) => {
   const menu_id = uuid();
-  console.log("Submitting data...", menuItem)
   set(ref(db, "menuItems/" + menu_id), { ...menuItem, menu_id: menu_id })
 }
 

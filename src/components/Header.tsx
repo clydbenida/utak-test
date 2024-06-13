@@ -1,13 +1,24 @@
 import emotionStyled from "@emotion/styled";
 import { Container, TextField, styled } from "@mui/material";
 
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { onQueryChange } from "../redux/app/appReducer";
+
 export default function Header() {
+  const keyword = useAppSelector(state => state.app.search.query)
+  const dispatch = useAppDispatch();
+
   return (
     <HeaderContainer>
       <BrandContainer>
         <h1>Brand Name</h1>
         <div>
-          <SearchField placeholder="Search menu" variant="standard" />
+          <SearchField
+            placeholder="Search menu by name"
+            variant="standard"
+            value={keyword ?? ""}
+            onChange={e => dispatch(onQueryChange(e.target.value))}
+          />
         </div>
       </BrandContainer>
     </HeaderContainer>

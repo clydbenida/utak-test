@@ -55,7 +55,6 @@ export const menuSlice = createSlice({
       const { options, ...plainFields } = { ...state.menuForm.fields };
       for (const key in plainFields) {
         if (!plainFields[key as keyof typeof plainFields]) {
-          console.log(plainFields);
           state.menuForm.error = {
             ...state.menuForm.error, [key]: "Empty"
           }

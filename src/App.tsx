@@ -1,19 +1,19 @@
-import { Fab } from '@mui/material'
 import './App.css'
-import Header from './components/Header'
+import { useState } from 'react'
+import { Fab } from '@mui/material'
 import { Add } from '@mui/icons-material'
+
+import Header from './components/Header'
 import MainContent from './components/MainContent'
 import CreateMenuDialog from './components/CreateMenuDialog'
-import { useEffect, useState } from 'react'
-import { db } from './firebase'
-import { ref, onValue } from 'firebase/database'
-import { MenuItem } from './types/types'
-import { useAppDispatch } from './redux/hooks'
-import { assignMenuItems } from './redux/menu/menuReducer'
+import { useAppSelector } from './redux/hooks'
+import useFetchMenu from './hooks/useFetchMenu'
 
 function App() {
   const [showCreateMenu, setShowCreateMenu] = useState(false);
-  const dispatch = useAppDispatch();
+  const query = useAppSelector(state => state.app.search.query);
+
+  useFetchMenu(query);
 
   function handleOpenCreateMenuDialog() {
     setShowCreateMenu(true);
@@ -23,29 +23,13 @@ function App() {
     setShowCreateMenu(false);
   }
 
-  useEffect(() => {
-    const testRef = ref(db, 'menuItems');
-
-    onValue(testRef, (snapshot) => {
-      const data = snapshot.val();
-      const dataKeys = Object.keys(data);
-      const menuItems: MenuItem[] = dataKeys.map(uidKey => data[uidKey]);
-
-      dispatch(assignMenuItems(menuItems));
-    })
-  }, []);
-
   return (
     <>
       <Header />
       <MainContent handleOpenEditMenu={handleOpenCreateMenuDialog} />
       <Fab
         onClick={handleOpenCreateMenuDialog}
-        sx={{
-          position: 'absolute',
-          bottom: '2rem',
-          right: '2rem',
-        }}
+        sx={fabStyles}
         variant="extended"
         size="large"
         color="primary"
@@ -60,3 +44,9 @@ function App() {
 }
 
 export default App
+
+const fabStyles = {
+  position: 'fixed',
+  bottom: '2rem',
+  right: '2rem',
+} as const;

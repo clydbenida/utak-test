@@ -1,7 +1,5 @@
 import { PropsWithChildren } from "react";
 
-export type ThemeMode = 'dark' | 'light';
-
 export interface CreateMenuDialogPropTypes extends PropsWithChildren {
   open: boolean;
   handleCancel?: () => void;
@@ -11,9 +9,6 @@ export interface CreateMenuDialogPropTypes extends PropsWithChildren {
 export interface MenuDialogContentProps {
   handleCancel?: () => void;
   handleClose: () => void;
-}
-
-export interface CreateMenuFormPropTypes {
 }
 
 export interface MenuOptionItemPropTypes {

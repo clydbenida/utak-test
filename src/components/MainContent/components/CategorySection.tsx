@@ -1,9 +1,9 @@
 import { Box, Grid } from "@mui/material";
 
-import { CategorySectionHeader } from "./styled";
 import MenuItemCard from "./MenuItemCard";
 import { MenuItem } from "../../../types/types";
 import { useAppSelector } from "../../../redux/hooks";
+import emotionStyled from "@emotion/styled";
 
 interface CategorySectionPropTypes {
   categoryName: string;
@@ -30,3 +30,7 @@ export default function CategorySection(props: CategorySectionPropTypes) {
     </Box>
   )
 }
+
+const CategorySectionHeader = emotionStyled.h2`
+  margin-bottom: 0;
+`
